@@ -11,6 +11,7 @@ class HMM(Scene):
             font="Times New Roman"
         )
         self.play(Write(text))
+        self.wait(20)
 
         text2 = Text(
             "Marcov Model",
@@ -38,7 +39,7 @@ class HMM(Scene):
         )
         tex2.next_to(tex, DOWN)
         self.play(ShowCreation(tex2))
-        self.wait(5)
+        self.wait(4)
 
         # 画MARCOV图示
         # 画MARCOV图示
@@ -79,7 +80,7 @@ class HMM(Scene):
         set4 = VGroup(c4, t4)
         setC = VGroup(set1, set2, set3, set4).arrange(RIGHT, buff=2)
         self.play(Write(setC))
-        self.wait(2)
+
 
         # draw the lines
         a1 = CurvedArrow(
@@ -97,7 +98,12 @@ class HMM(Scene):
         a4 = CurvedArrow(
             start_point=c2.get_start(),
             end_point=c4.get_start() + LEFT,
-            color=BLUE
+        )
+        a5 = ArcBetweenPoints(
+            start=c3.get_start()+LEFT+DR*0.3+DOWN*0.2,
+            end=c3.get_start()+DL*0.3+DOWN*0.2,
+            color=BLUE,
+            angle=PI
         )
         t11 = TexText(
             "1.0"
@@ -110,19 +116,22 @@ class HMM(Scene):
         ).scale(0.5).next_to(a3, DOWN * 0.3)
         t14 = TexText(
             "0.4",
-            color=BLUE
         ).scale(0.5).next_to(a4, DOWN * 0.3)
+        t15 = TexText(
+            "0.7",
+            color=BLUE
+        ).scale(0.5).next_to(a5, DOWN * 0.3)
         set11 = VGroup(a1, t11)
         set12 = VGroup(a2, t12)
         set13 = VGroup(a3, t13)
         set14 = VGroup(a4, t14)
+        set15 = VGroup(a5, t15)
 
-        self.play(Write(set11)), self.play(Write(set12)), self.play(Write(set13))
-        self.wait()
-        self.play(Write(set14))
-        self.wait(10)
+        self.play(Write(set11)), self.play(Write(set12)), self.play(Write(set13)),self.play(Write(set14))
+        self.play(Write(set15))
+        self.wait(35)
 
-        set = VGroup(set1, set2, set3, set4, set11, set12, set13, set14)
+        set = VGroup(set1, set2, set3, set4, set11, set12, set13, set14,set15)
         setA = VGroup(tex, tex2, text2)
         self.play(Uncreate(set))
         self.play(Uncreate(setA))
@@ -134,7 +143,8 @@ class HMM(Scene):
         map1={
             r"$s_1,s_2,s_3,...,s_T$": BLUE,
             r"$o_t$":BLUE,
-            r"$s_t$":BLUE
+            r"$s_t$":BLUE,
+            r"独立输出假设":BLUE
         }
         text1=Text(
             "Hidden Marcov Model(HMM)",
@@ -142,6 +152,7 @@ class HMM(Scene):
             font="Times New Roman",
         )
         self.play(Write(text1.scale(0.7)))
+        self.wait(5)
 
         #self.wait(2)
 
@@ -152,10 +163,11 @@ class HMM(Scene):
                     tex_to_color_map = map1
                     )
         self.play(Write(tex))
-        self.wait()
+        self.wait(5)
         self.play(Uncreate(tex))
 
         tex1=TexText(
+            r"独立输出假设\\"
             r"for every $s_t$, there is an output $o_t$\\",
             r"$o_t$ is only relevant to $s_t$" ,
             tex_to_color_map = map1
@@ -163,6 +175,7 @@ class HMM(Scene):
         self.play(Write(tex1))
         tex2 = tex1.copy().scale(0.9).move_to(UP * 2.2)
         self.play(ReplacementTransform(tex1,tex2))
+        self.wait(8)
 
         c1 = Circle(
             color=BLUE,
@@ -281,17 +294,31 @@ class HMM(Scene):
                                 "$w_1,w_2,w_3,...,w_N$":BLUE}
         )
         self.play(Write(tex1.scale(0.9).move_to(UP*2.2)))
-        self.wait(5)
+        self.wait(10)
+
+        tex12=TexText(
+            r"Now we need to use $y_1,y_2,y_3,...,y_N$ to estimate $w_1,w_2,w_3,...,w_N$\\",
+            r"So we assume that $y_t$is the output of $w_t$",
+            tex_to_color_map = {"$y_1,y_2,y_3,...,y_N$":BLUE,
+                                "$w_1,w_2,w_3,...,w_N$":BLUE,
+                                "$y_t$": BLUE,
+                                "$w_t$": BLUE,"$w_{t-1}$":BLUE,
+                    }
+        )
+        self.play(FadeTransform(tex1,tex12.scale(0.9).move_to(UP*2.2)))
+        self.wait(15)
 
         tex2=TexText(
-            r"$w_t$is only relevant to $w_{t-1}$,so it is memoryless\\"
+            r"独立输出假设\\"
+            r"$w_t$is only relevant to $w_{t-1}$\\"
             r"$y_t$is only relevant to $w_t$\\",
-            r"We can use HMM to estimate $w_t$",
+
             tex_to_color_map={"$y_t$": BLUE,
                               "$w_t$": BLUE,"$w_{t-1}$":BLUE,
-                              "HMM":BLUE}
+                              "独立输出假设":BLUE}
         )
-        self.play(FadeTransform(tex1,tex2.scale(0.9).move_to(UP*2.2)))
+        self.play(FadeTransform(tex12,tex2.scale(0.9).move_to(UP*2.2)))
+        self.wait(15)
 
         setC5=VGroup(setC2,setC4)
         self.play(FadeOut(setC5))
@@ -406,7 +433,7 @@ class HMM(Scene):
         setC4 = VGroup(setC3, a5, a6, a7, a8)
         setC5 = VGroup(setC2,setC4)
         self.play(Write(setC5))
-
+        self.wait(5)
         self.play(Uncreate(tex2))
 
         setC6=setC5.copy().scale(0.7).move_to(UP)
@@ -423,6 +450,7 @@ class HMM(Scene):
             # r"$\end{align}$",
         ).move_to(DOWN * 2)
         self.play(Write(tex1))
+        self.wait(3)
 
         self.play(Uncreate(setC6))
 
@@ -431,12 +459,14 @@ class HMM(Scene):
             tex_to_color_map={r"$\frac{P(B|A)P(A)}{P(B)}$": BLUE}
         )
         self.play(Write(tex2))
+        self.wait(5)
         l = Line(
             start=ORIGIN,
             end=UP * 2
         )
 
         self.play(MoveAlongPath(tex2, l))
+        self.wait(8)
 
         tex3 = TexText(
             r"$P(w_1,w_2,...,w_N|y_1,y_2,...,y_N)= $"
@@ -449,16 +479,18 @@ class HMM(Scene):
         self.play(FadeTransform(tex2, tex3))
         self.wait()
         tex4 = TexText(
-            r"$P(y_1,y_2,...,y_N)=1$",
+            r"$P(y_1,y_2,...,y_N)=C$",
             color=YELLOW
         ).move_to(UP * 2)
         self.play(Write(tex4))
+        self.wait(10)
 
         tex5 = TexText(
             r"$= P(y_1,y_2,...,y_N|w_1,...,w_N)P(w_1,w_2,...,w_N)$",
             color=YELLOW
         ).scale(0.7).next_to(tex3, DOWN)
         self.play(FadeTransform(tex4, tex5))
+        self.wait(5)
 
         tex52 = TexText(
             r"$P(y_1,y_2,...,y_N|w_1,...,w_N) \hspace{1cm} P(w_1,w_2,...,w_N)$",
@@ -473,20 +505,21 @@ class HMM(Scene):
         tex61 = Tex(
             r"P(w_1,w_2,...,w_N) &= P(w_N|w_1,...,w_{N-1})P(w_1,...,w_{N-1})\\",
             r"&=P(w_N|w_1,...,w_{N-1})P(w_{N-1}|w_1,...,w_{N-2})P(w_1,...,w_{N-2})\\",
+            r"&=\prod_t^N P(w_t|w_1,...,w_{t-1})\\"
 
         ).scale(0.7).move_to(DOWN*0.5)
 
         tex62=Tex(
-            r"&=\prod_t^N P(w_t|w_1,...,w_{t-1})\\",
             r"&=\prod_t^N P(w_t|w_{t-1})",
             tex_to_color_map={"\prod_t^N P(w_t|w_{t-1})":YELLOW}
-        ).scale(0.7).next_to(tex61,DOWN).shift(LEFT*1.4)
+        ).scale(0.7).next_to(tex61,DOWN).shift(LEFT*1.9)
 
         set2=VGroup(tex61,tex62)
 
         self.play(Write(tex61))
-        self.wait(2)
+        self.wait(12)
         self.play(Write(tex62))
+        self.wait(8)
 
         tex7 = TexText(
             r"$\prod_t^N P(w_t|w_{t-1})$",
@@ -494,19 +527,26 @@ class HMM(Scene):
         ).scale(0.8).move_to(UP+RIGHT*3.5)
         self.play(FadeTransform(set2,tex7))
 
-        tex8 = Tex(
+        tex81 = Tex(
             r"P(y_1,y_2,...,y_N|w_1,w_2,...,w_N) ",
             r"&=\prod_t^N P(y_t|w_1,w_2,...,w_N) \\",
+        ).scale(0.7).move_to(DOWN)
+        tex82=Tex(
             r"&= \prod_t^N P(y_t|w_t)",
             tex_to_color_map={r"&= \prod_t^N P(y_t|w_t)":YELLOW}
-        ).scale(0.7).move_to(DOWN)
-        self.play(Write(tex8))
+        ).scale(0.7).next_to(tex81,DOWN).shift(RIGHT*1.5)
+        self.play(Write(tex81))
+        self.wait(12)
+        self.play(Write(tex82))
+        self.wait(10)
+
+        set3=VGroup(tex81,tex82)
 
         tex9 = TexText(
             r"$\prod_t^N P(y_t|w_t)$",
             color=YELLOW
         ).scale(0.8).move_to(UP+LEFT*3)
-        self.play(FadeTransform(tex8, tex9))
+        self.play(FadeTransform(set3, tex9))
 
 
         tex10 = Tex(
@@ -524,6 +564,6 @@ class HMM(Scene):
             color=BLUE
         )
         self.play(FadeTransform(tex10,tex11))
-        self.wait(3)
+        self.wait(5)
 
 
